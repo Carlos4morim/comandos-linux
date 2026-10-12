@@ -1,0 +1,572 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#12141a">
+<title>Comandos Linux</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#12141a;--surface:#1b1e26;--surface2:#232732;--border:#2c313d;
+  --text:#eceef2;--muted:#9aa3b2;--soft:#c3c9d4;
+  --accent:#f5b942;--on-accent:#1a1405;--code:#8fd3b6;--codebg:#0c0e12;--danger:#ff8a80;
+  --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',system-ui,-apple-system,'Segoe UI',sans-serif;-webkit-text-size-adjust:100%}
+#app{max-width:520px;margin:0 auto;min-height:100dvh}
+button{font-family:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+h1{margin:0;font-size:24px;font-weight:600;letter-spacing:-.2px}
+.sub{font-size:13px;color:var(--muted);margin-top:4px}
+.pad{padding:0 20px}
+main{padding-bottom:140px}
+main.plain{padding-bottom:48px}
+
+.top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:28px 20px 14px}
+.iconbtn{width:44px;height:44px;border-radius:12px;border:1px solid var(--border);background:var(--surface);color:#cbd2dd;display:flex;align-items:center;justify-content:center;padding:0;cursor:pointer;flex:none}
+
+.search{display:flex;align-items:center;gap:10px;height:48px;padding:0 14px;border-radius:12px;background:var(--surface);border:1px solid var(--border);color:var(--muted)}
+.search input{flex:1;min-width:0;background:transparent;border:0;outline:0;color:var(--text);font-family:inherit;font-size:16px}
+.search input::placeholder{color:#8d96a6}
+.chips{display:flex;gap:8px;padding:14px 20px 6px;overflow-x:auto;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;height:36px;padding:0 14px;border-radius:18px;border:1px solid var(--border);background:var(--surface);color:#cbd2dd;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap}
+.chip.on{background:var(--accent);border-color:var(--accent);color:var(--on-accent);font-weight:600}
+
+.cards{padding:8px 20px 0;display:flex;flex-direction:column;gap:10px}
+.card{display:flex;flex-direction:column;gap:8px;text-align:left;width:100%;padding:14px 16px;border-radius:14px;background:var(--surface);border:1px solid var(--border);color:inherit;font-size:inherit;cursor:pointer}
+.card .row{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.cmd{font-family:var(--mono);font-size:18px;font-weight:700;color:var(--code);word-break:break-all}
+.count{font-size:12px;color:var(--muted);white-space:nowrap}
+.desc{font-size:14px;color:var(--soft);line-height:1.4}
+.flags{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.flag{font-family:var(--mono);font-size:12px;padding:3px 8px;border-radius:6px;background:var(--surface2);color:var(--accent)}
+.more{font-size:12px;color:var(--muted);padding:3px 4px}
+.empty{text-align:center;padding:48px 24px;color:var(--muted);line-height:1.5;font-size:14px}
+.empty strong{display:block;color:var(--text);font-size:16px;margin-bottom:6px}
+
+.fabwrap{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(84px + env(safe-area-inset-bottom));width:100%;max-width:520px;pointer-events:none;display:flex;justify-content:flex-end;padding-right:20px}
+.fab{pointer-events:auto;width:56px;height:56px;border-radius:16px;border:0;background:var(--accent);color:var(--on-accent);display:flex;align-items:center;justify-content:center;padding:0;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.45)}
+
+nav{position:fixed;left:50%;transform:translateX(-50%);bottom:0;width:100%;max-width:520px;height:calc(72px + env(safe-area-inset-bottom));padding:6px 12px calc(8px + env(safe-area-inset-bottom));background:var(--bg);border-top:1px solid var(--border);display:flex}
+.tab{flex:1;border:0;background:transparent;color:var(--muted);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:12px;font-weight:500;cursor:pointer}
+.tab.on{color:var(--accent);font-weight:600}
+
+.bar{display:flex;align-items:center;justify-content:space-between;padding:16px 12px 4px}
+.back{height:44px;padding:0 12px 0 6px;border:0;background:transparent;color:#cbd2dd;display:flex;align-items:center;gap:4px;font-size:15px;cursor:pointer}
+.barbtn{width:44px;height:44px;border:0;background:transparent;color:#cbd2dd;display:flex;align-items:center;justify-content:center;padding:0;cursor:pointer}
+.head{padding:8px 20px 4px}
+.big{font-family:var(--mono);font-size:34px;font-weight:700;color:var(--code);letter-spacing:-.5px;word-break:break-all}
+.lead{font-size:16px;color:#d5dae3;line-height:1.45;margin-top:10px}
+.meta{display:flex;gap:8px;align-items:center;margin-top:12px;font-size:12px;color:var(--muted);flex-wrap:wrap}
+.tag{font-weight:500;padding:4px 10px;border-radius:999px;background:var(--surface2);color:#cbd2dd}
+.sec{display:flex;justify-content:space-between;align-items:center;padding:20px 20px 0;font-size:12px;color:var(--muted)}
+.sec h2{margin:0;font-size:13px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--muted)}
+.stack{display:flex;flex-direction:column;gap:8px;padding:10px 20px 0}
+.opt{display:flex;gap:14px;align-items:flex-start;padding:12px 14px;border-radius:12px;background:var(--surface);border:1px solid var(--border)}
+.opt .f{font-family:var(--mono);font-size:15px;font-weight:700;color:var(--accent);min-width:28px;word-break:break-all}
+.opt .d{font-size:14px;color:#d5dae3;line-height:1.4}
+.opt .d.none{color:var(--muted);font-style:italic}
+.dash{height:48px;border-radius:12px;border:1px dashed #4a5163;background:transparent;color:var(--accent);font-size:14px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;width:100%}
+.code{padding:12px 14px;border-radius:12px;background:var(--codebg);border:1px solid var(--border);font-family:var(--mono);font-size:13px;color:var(--code);line-height:1.6;overflow-x:auto;white-space:pre}
+.code .p{color:var(--muted)}
+
+.form{display:flex;flex-direction:column;gap:16px;padding:12px 20px 0}
+.fld{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:var(--muted)}
+.hint{font-weight:400;font-size:12px;color:var(--muted);line-height:1.4}
+.in{width:100%;padding:12px 14px;border-radius:12px;background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:inherit;font-size:16px;outline:0}
+.in:focus{border-color:var(--accent)}
+textarea.in{resize:vertical;line-height:1.5}
+.mono{font-family:var(--mono)}
+.btns{display:flex;gap:10px}
+.btns.col{flex-direction:column}
+.primary{height:52px;border-radius:12px;border:0;background:var(--accent);color:var(--on-accent);font-size:16px;font-weight:600;cursor:pointer;width:100%}
+.primary:disabled{opacity:.4;cursor:not-allowed}
+.ghost{height:48px;border-radius:12px;border:1px solid var(--border);background:transparent;color:#cbd2dd;font-size:14px;font-weight:500;cursor:pointer;width:100%}
+.danger{height:48px;border-radius:12px;border:1px solid #5a3036;background:transparent;color:var(--danger);font-size:14px;font-weight:500;cursor:pointer;width:100%}
+
+.panel{padding:14px 16px;border-radius:12px;background:var(--surface);border:1px solid var(--border);display:flex;flex-direction:column;gap:10px}
+.lbl{font-size:13px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--muted)}
+.tiles{display:flex;gap:8px}
+.tile{flex:1;padding:10px 8px;border-radius:10px;background:var(--surface2);text-align:center}
+.tile b{display:block;font-size:22px;font-weight:600}
+.tile span{font-size:12px;color:#b4bcc9}
+.err{color:var(--danger);font-size:14px;line-height:1.4}
+.note{font-size:13px;color:#b4bcc9;line-height:1.45}
+.tip{padding:12px 14px;border-radius:12px;border:1px dashed #3a4050;display:flex;flex-direction:column;gap:8px}
+.tip b{font-size:12px;color:var(--accent)}
+.gap{display:flex;flex-direction:column;gap:14px}
+
+#toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(92px + env(safe-area-inset-bottom));max-width:calc(100% - 40px);padding:10px 16px;border-radius:10px;background:#2a2f3b;color:var(--text);font-size:14px;box-shadow:0 6px 18px rgba(0,0,0,.45);z-index:10}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+(function () {
+  'use strict';
+
+  var KEY = 'cmdnotes.v1';
+  var PROMPT_IA =
+    'Gere um JSON com tudo que estudamos até agora, neste formato exato e sem nenhum texto fora do JSON:\n' +
+    '[\n  {\n    "comando": "grep",\n    "descricao": "Busca padrões em texto",\n    "categoria": "busca",\n' +
+    '    "opcoes": [ {"flag": "-i", "descricao": "Ignora maiúsculas e minúsculas"} ],\n' +
+    '    "exemplos": ["grep -i erro log.txt"]\n  }\n]\n' +
+    'Use uma categoria curta, em minúsculas, para cada comando.';
+
+  var ICON = {
+    search: '<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>',
+    plus: '<svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>',
+    plusSm: '<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>',
+    back: '<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>',
+    edit: '<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16v4z"/><path d="M13.5 6.5l4 4"/></svg>',
+    list: '<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16"/><path d="M4 12h16"/><path d="M4 18h10"/></svg>',
+    up: '<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V4"/><path d="M7 9l5-5 5 5"/><path d="M5 20h14"/></svg>',
+    down: '<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11"/><path d="M7 10l5 5 5-5"/><path d="M5 20h14"/></svg>'
+  };
+
+  /* ---------- utilidades ---------- */
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  function str(v) { return typeof v === 'string' ? v.trim() : (typeof v === 'number' ? String(v) : ''); }
+  function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+  function today() {
+    var d = new Date();
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  }
+  function fmtDate(iso) { return iso && /^\d{4}-\d{2}-\d{2}$/.test(iso) ? iso.slice(8, 10) + '/' + iso.slice(5, 7) : ''; }
+  function plural(n, um, varios) { return n + ' ' + (n === 1 ? um : varios); }
+  function lines(t) { return String(t || '').split(/\r?\n/).map(function (s) { return s.trim(); }).filter(Boolean); }
+
+  function parseOptLine(l) {
+    l = String(l).trim();
+    if (!l) return null;
+    var i = l.indexOf('|'), flag, desc;
+    if (i >= 0) { flag = l.slice(0, i).trim(); desc = l.slice(i + 1).trim(); }
+    else { var m = l.match(/^(\S+)\s*(.*)$/); flag = m[1]; desc = m[2]; }
+    return flag ? { flag: flag, descricao: desc } : null;
+  }
+  function parseOptLines(t) {
+    var seen = {}, out = [];
+    String(t || '').split(/\r?\n/).forEach(function (l) {
+      var o = parseOptLine(l);
+      if (o && !seen[o.flag]) { seen[o.flag] = 1; out.push(o); }
+    });
+    return out;
+  }
+
+  function normalize(x) {
+    if (!x || typeof x !== 'object') return null;
+    var nome = str(x.comando || x.command || x.nome);
+    if (!nome) return null;
+    var raw = x.opcoes || x['opções'] || x.options || [];
+    var seen = {}, ops = [];
+    (Array.isArray(raw) ? raw : []).forEach(function (o) {
+      var r = null;
+      if (typeof o === 'string') r = parseOptLine(o);
+      else if (o && typeof o === 'object') {
+        var f = str(o.flag || o.opcao || o['opção'] || o.option);
+        if (f) r = { flag: f, descricao: str(o.descricao || o['descrição'] || o.description) };
+      }
+      if (r && !seen[r.flag]) { seen[r.flag] = 1; ops.push(r); }
+    });
+    var exRaw = Array.isArray(x.exemplos) ? x.exemplos : (Array.isArray(x.examples) ? x.examples : []);
+    var ex = [];
+    exRaw.map(str).filter(Boolean).forEach(function (e) { if (ex.indexOf(e) < 0) ex.push(e); });
+    var d = str(x.estudadoEm);
+    return {
+      comando: nome,
+      descricao: str(x.descricao || x['descrição'] || x.description),
+      categoria: str(x.categoria || x.category),
+      opcoes: ops,
+      exemplos: ex,
+      estudadoEm: /^\d{4}-\d{2}-\d{2}$/.test(d) ? d : ''
+    };
+  }
+
+  /* ---------- dados ---------- */
+  function load() {
+    try {
+      var r = localStorage.getItem(KEY);
+      if (r) {
+        var d = JSON.parse(r);
+        if (Array.isArray(d)) {
+          return d.map(function (x) {
+            var n = normalize(x);
+            if (!n) return null;
+            n.id = (x && typeof x.id === 'string' && x.id) ? x.id : uid();
+            n.estudadoEm = n.estudadoEm || today();
+            return n;
+          }).filter(Boolean);
+        }
+      }
+    } catch (e) { /* ignora */ }
+    return [];
+  }
+  var data = load();
+  function save() {
+    try { localStorage.setItem(KEY, JSON.stringify(data)); }
+    catch (e) { toast('Não foi possível salvar neste navegador'); }
+  }
+  function find(id) { for (var i = 0; i < data.length; i++) if (data[i].id === id) return data[i]; return null; }
+
+  function mergeInto(list, items) {
+    var s = { novos: 0, mesclados: 0, inalterados: 0, opcoes: 0, detalhes: [] };
+    items.forEach(function (it) {
+      var ex = null;
+      for (var i = 0; i < list.length; i++) {
+        if (list[i].comando.toLowerCase() === it.comando.toLowerCase()) { ex = list[i]; break; }
+      }
+      if (!ex) {
+        list.push({
+          id: uid(), comando: it.comando, descricao: it.descricao, categoria: it.categoria,
+          opcoes: it.opcoes.slice(), exemplos: it.exemplos.slice(), estudadoEm: it.estudadoEm || today()
+        });
+        s.novos++; s.opcoes += it.opcoes.length;
+        return;
+      }
+      var changed = false, added = 0;
+      if (!ex.descricao && it.descricao) { ex.descricao = it.descricao; changed = true; }
+      if (!ex.categoria && it.categoria) { ex.categoria = it.categoria; changed = true; }
+      it.opcoes.forEach(function (o) {
+        var have = null;
+        for (var j = 0; j < ex.opcoes.length; j++) if (ex.opcoes[j].flag === o.flag) { have = ex.opcoes[j]; break; }
+        if (!have) { ex.opcoes.push({ flag: o.flag, descricao: o.descricao }); added++; s.opcoes++; changed = true; }
+        else if (!have.descricao && o.descricao) { have.descricao = o.descricao; changed = true; }
+      });
+      it.exemplos.forEach(function (e) { if (ex.exemplos.indexOf(e) < 0) { ex.exemplos.push(e); changed = true; } });
+      if (changed) {
+        s.mesclados++;
+        s.detalhes.push(ex.comando + (added ? ': +' + plural(added, 'opção', 'opções') : ': atualizado'));
+      } else s.inalterados++;
+    });
+    return s;
+  }
+
+  function parseImport(text) {
+    var t = String(text || '').trim();
+    if (!t) return { empty: true };
+    var j;
+    try { j = JSON.parse(t); } catch (e) { return { error: 'JSON inválido: ' + e.message }; }
+    if (!Array.isArray(j) && j && Array.isArray(j.comandos)) j = j.comandos;
+    if (!Array.isArray(j)) return { error: 'O JSON deve ser uma lista de comandos.' };
+    var items = [], skipped = 0;
+    j.forEach(function (x) { var n = normalize(x); if (n) items.push(n); else skipped++; });
+    if (!items.length) return { error: 'Nenhum comando válido encontrado. Cada item precisa do campo "comando".' };
+    var copy = JSON.parse(JSON.stringify(data));
+    var stats = mergeInto(copy, items);
+    stats.skipped = skipped;
+    return { items: items, stats: stats };
+  }
+
+  /* ---------- estado e navegação ---------- */
+  var st = { view: 'list', id: null, q: '', cat: 'Todos', addOpt: false, importText: '' };
+  var root = document.getElementById('app');
+
+  function go(view, id, opt) {
+    st.view = view; st.id = id == null ? null : id; st.addOpt = false;
+    var s = { nav: view !== 'list', view: view, id: st.id };
+    if (opt && opt.replace) history.replaceState(s, ''); else history.pushState(s, '');
+    render();
+    window.scrollTo(0, 0);
+  }
+  history.replaceState({ nav: false, view: 'list', id: null }, '');
+  window.addEventListener('popstate', function (e) {
+    var s = e.state;
+    if (s && s.view) { st.view = s.view; st.id = s.id; } else { st.view = 'list'; st.id = null; }
+    st.addOpt = false;
+    render();
+  });
+
+  /* ---------- telas ---------- */
+  function allCats() {
+    var seen = {}, out = [];
+    data.forEach(function (c) { if (c.categoria && !seen[c.categoria]) { seen[c.categoria] = 1; out.push(c.categoria); } });
+    out.sort(function (a, b) { return a.localeCompare(b, 'pt-BR'); });
+    return ['Todos'].concat(out);
+  }
+  function hay(c) {
+    return [c.comando, c.descricao, c.categoria]
+      .concat(c.opcoes.map(function (o) { return o.flag + ' ' + o.descricao; }), c.exemplos)
+      .join('\n').toLowerCase();
+  }
+  function visible() {
+    var q = st.q.trim().toLowerCase();
+    return data.filter(function (c) {
+      return (st.cat === 'Todos' || c.categoria === st.cat) && (!q || hay(c).indexOf(q) >= 0);
+    }).sort(function (a, b) { return a.comando.localeCompare(b.comando, 'pt-BR'); });
+  }
+  function empty(t, p) { return '<div class="empty"><strong>' + esc(t) + '</strong>' + esc(p) + '</div>'; }
+  function card(c) {
+    var flags = c.opcoes.slice(0, 3).map(function (o) { return '<span class="flag">' + esc(o.flag) + '</span>'; }).join('');
+    var more = c.opcoes.length > 3 ? '<span class="more">+' + (c.opcoes.length - 3) + '</span>' : '';
+    return '<button class="card" data-act="open" data-id="' + esc(c.id) + '">' +
+      '<span class="row"><span class="cmd">' + esc(c.comando) + '</span><span class="count">' + plural(c.opcoes.length, 'opção', 'opções') + '</span></span>' +
+      (c.descricao ? '<span class="desc">' + esc(c.descricao) + '</span>' : '') +
+      (flags || more ? '<span class="flags">' + flags + more + '</span>' : '') +
+      '</button>';
+  }
+  function cards() {
+    if (!data.length) return empty('Nenhum comando ainda', 'Toque em + para adicionar o primeiro, ou use a aba Importar para colar um JSON.');
+    var list = visible();
+    if (!list.length) return empty('Nada encontrado', 'Tente outra palavra ou outra categoria.');
+    return list.map(card).join('');
+  }
+
+  function viewList() {
+    var cats = allCats();
+    if (cats.indexOf(st.cat) < 0) st.cat = 'Todos';
+    var nOpt = data.reduce(function (a, c) { return a + c.opcoes.length; }, 0);
+    return '<main>' +
+      '<header class="top"><div><h1>Meus comandos</h1><div class="sub">' + plural(data.length, 'comando', 'comandos') + ' · ' + plural(nOpt, 'opção', 'opções') + '</div></div>' +
+      '<button class="iconbtn" data-act="export" aria-label="Exportar backup em JSON">' + ICON.down + '</button></header>' +
+      '<div class="pad"><label class="search">' + ICON.search +
+      '<input id="q" type="search" aria-label="Buscar comando ou opção" placeholder="Buscar comando ou opção" value="' + esc(st.q) + '" autocomplete="off" autocapitalize="off" spellcheck="false"></label></div>' +
+      '<div class="chips" role="group" aria-label="Categorias">' +
+      cats.map(function (c) { return '<button class="chip' + (c === st.cat ? ' on' : '') + '" data-act="cat" data-v="' + esc(c) + '">' + esc(c) + '</button>'; }).join('') +
+      '</div><div id="cards" class="cards">' + cards() + '</div></main>' +
+      '<div class="fabwrap"><button class="fab" data-act="new" aria-label="Adicionar comando">' + ICON.plus + '</button></div>';
+  }
+
+  function viewDetail() {
+    var c = find(st.id);
+    if (!c) { st.view = 'list'; return viewList(); }
+    var opts = c.opcoes.map(function (o) {
+      return '<div class="opt"><span class="f">' + esc(o.flag) + '</span><span class="d' + (o.descricao ? '' : ' none') + '">' + (o.descricao ? esc(o.descricao) : 'sem descrição') + '</span></div>';
+    }).join('');
+    var add = st.addOpt
+      ? '<form class="panel gap" data-form="addopt">' +
+        '<label class="fld">Opção<input class="in mono" name="flag" placeholder="-i" required autocomplete="off" autocapitalize="off" spellcheck="false"></label>' +
+        '<label class="fld">O que faz<input class="in" name="desc" placeholder="Ignora maiúsculas e minúsculas" autocomplete="off"></label>' +
+        '<div class="btns"><button type="button" class="ghost" data-act="cancelopt">Fechar</button><button type="submit" class="primary" style="height:48px">Salvar</button></div></form>'
+      : '<button class="dash" data-act="addopt">' + ICON.plusSm + 'Adicionar opção</button>';
+    var ex = c.exemplos.length
+      ? '<div class="sec"><h2>Exemplos</h2></div><div class="stack"><div class="code">' +
+        c.exemplos.map(function (e) { return '<span class="p">$ </span>' + esc(e); }).join('\n') + '</div></div>'
+      : '';
+    var meta = (c.categoria ? '<span class="tag">' + esc(c.categoria) + '</span>' : '') +
+      (fmtDate(c.estudadoEm) ? '<span>Estudado em ' + fmtDate(c.estudadoEm) + '</span>' : '');
+    return '<main class="plain">' +
+      '<div class="bar"><button class="back" data-act="back">' + ICON.back + 'Comandos</button>' +
+      '<button class="barbtn" data-act="edit" aria-label="Editar comando">' + ICON.edit + '</button></div>' +
+      '<section class="head"><div class="big">' + esc(c.comando) + '</div>' +
+      (c.descricao ? '<div class="lead">' + esc(c.descricao) + '</div>' : '') +
+      (meta ? '<div class="meta">' + meta + '</div>' : '') + '</section>' +
+      '<div class="sec"><h2>Opções</h2><span>' + c.opcoes.length + '</span></div>' +
+      '<div class="stack">' + opts + add + '</div>' + ex + '</main>';
+  }
+
+  function viewForm() {
+    var c = st.id ? find(st.id) : null;
+    var cats = allCats().slice(1);
+    return '<main class="plain">' +
+      '<div class="bar"><button class="back" data-act="back">' + ICON.back + 'Cancelar</button></div>' +
+      '<form class="form" data-form="cmd">' +
+      '<h1>' + (c ? 'Editar comando' : 'Novo comando') + '</h1>' +
+      '<label class="fld">Comando<input class="in mono" name="comando" required value="' + esc(c ? c.comando : '') + '" placeholder="grep" autocomplete="off" autocapitalize="off" spellcheck="false"></label>' +
+      '<label class="fld">Descrição<input class="in" name="descricao" value="' + esc(c ? c.descricao : '') + '" placeholder="Busca padrões de texto em arquivos" autocomplete="off"></label>' +
+      '<label class="fld">Categoria<input class="in" name="categoria" list="cats" value="' + esc(c ? c.categoria : '') + '" placeholder="busca" autocomplete="off" autocapitalize="off">' +
+      '<datalist id="cats">' + cats.map(function (x) { return '<option value="' + esc(x) + '">'; }).join('') + '</datalist></label>' +
+      '<label class="fld">Opções<span class="hint">Uma por linha, assim: -i | ignora maiúsculas e minúsculas</span>' +
+      '<textarea class="in mono" name="opcoes" rows="6" spellcheck="false" autocapitalize="off">' + esc(c ? c.opcoes.map(function (o) { return o.flag + ' | ' + o.descricao; }).join('\n') : '') + '</textarea></label>' +
+      '<label class="fld">Exemplos<span class="hint">Um por linha</span>' +
+      '<textarea class="in mono" name="exemplos" rows="3" spellcheck="false" autocapitalize="off">' + esc(c ? c.exemplos.join('\n') : '') + '</textarea></label>' +
+      '<button class="primary" type="submit">Salvar</button>' +
+      (c ? '<button class="danger" type="button" data-act="del">Excluir comando</button>' : '') +
+      '</form></main>';
+  }
+
+  function previewHtml(p) {
+    var head = '<div class="lbl">Pré-visualização</div>';
+    if (p.empty) return '<div class="panel">' + head + '<div class="note">Cole o JSON acima para ver o que será importado.</div></div>';
+    if (p.error) return '<div class="panel">' + head + '<div class="err">' + esc(p.error) + '</div></div>';
+    var s = p.stats;
+    var det = s.detalhes.slice(0, 5).map(function (d) { return '<div class="note">' + esc(d) + '</div>'; }).join('');
+    if (s.detalhes.length > 5) det += '<div class="note">e mais ' + (s.detalhes.length - 5) + '…</div>';
+    return '<div class="panel">' + head +
+      '<div class="tiles"><div class="tile"><b style="color:var(--code)">' + s.novos + '</b><span>novos</span></div>' +
+      '<div class="tile"><b style="color:var(--accent)">' + s.mesclados + '</b><span>mesclados</span></div>' +
+      '<div class="tile"><b>' + s.inalterados + '</b><span>sem mudança</span></div></div>' + det +
+      (s.skipped ? '<div class="note">' + plural(s.skipped, 'item ignorado', 'itens ignorados') + ' (sem o campo "comando").</div>' : '') + '</div>';
+  }
+  function importLabel(p) {
+    return p.items ? 'Importar ' + plural(p.items.length, 'comando', 'comandos') : 'Importar';
+  }
+
+  function viewImport() {
+    var p = parseImport(st.importText);
+    return '<main>' +
+      '<header class="top"><div><h1>Importar JSON</h1><div class="sub">Comandos que já existem são mesclados: só entra o que for novo.</div></div></header>' +
+      '<div class="form" style="gap:14px">' +
+      '<label class="fld" for="imp">JSON</label>' +
+      '<textarea id="imp" class="in mono" rows="9" spellcheck="false" autocapitalize="off" placeholder=\'[ { "comando": "grep", "opcoes": [ ... ] } ]\' style="font-size:13px;margin-top:-8px">' + esc(st.importText) + '</textarea>' +
+      '<div id="prev">' + previewHtml(p) + '</div>' +
+      '<div class="btns col"><button class="primary" id="doimp" data-act="import"' + (p.items ? '' : ' disabled') + '>' + esc(importLabel(p)) + '</button>' +
+      '<button class="ghost" data-act="paste">Colar da área de transferência</button></div>' +
+      '<div class="tip"><b>Dica para a IA</b><div class="note">Copie o pedido abaixo e envie para a IA com quem você estuda. Depois cole a resposta aqui.</div>' +
+      '<button class="ghost" data-act="copyprompt">Copiar pedido para a IA</button></div>' +
+      '<div class="tip"><b>Backup</b><div class="note">Seus dados ficam salvos só neste navegador. Exporte de tempos em tempos.</div>' +
+      '<button class="ghost" data-act="export">Exportar backup (JSON)</button></div>' +
+      '</div></main>';
+  }
+
+  function nav() {
+    function tab(v, label, icon) {
+      var on = st.view === v;
+      return '<button class="tab' + (on ? ' on' : '') + '" data-act="tab" data-v="' + v + '"' + (on ? ' aria-current="page"' : '') + '>' + icon + label + '</button>';
+    }
+    return '<nav aria-label="Navegação principal">' + tab('list', 'Comandos', ICON.list) + tab('import', 'Importar', ICON.up) + '</nav>';
+  }
+
+  function render() {
+    var v = st.view, html;
+    if (v === 'detail') html = viewDetail();
+    else if (v === 'form') html = viewForm();
+    else if (v === 'import') html = viewImport();
+    else html = viewList();
+    var showNav = st.view === 'list' || st.view === 'import';
+    root.innerHTML = html + (showNav ? nav() : '');
+    var f;
+    if (st.view === 'detail' && st.addOpt) f = root.querySelector('[name=flag]');
+    else if (st.view === 'form' && !st.id) f = root.querySelector('[name=comando]');
+    if (f) f.focus();
+  }
+
+  /* ---------- feedback ---------- */
+  var toastTimer;
+  function toast(msg) {
+    var t = document.getElementById('toast');
+    if (!t) { t = document.createElement('div'); t.id = 'toast'; t.setAttribute('role', 'status'); document.body.appendChild(t); }
+    t.textContent = msg; t.style.display = 'block';
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { t.style.display = 'none'; }, 2400);
+  }
+  function copyText(text, okMsg) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () { toast(okMsg); }, function () { toast('Não consegui copiar'); });
+    } else toast('Não consegui copiar');
+  }
+  function exportJson() {
+    var out = data.map(function (c) {
+      return { comando: c.comando, descricao: c.descricao, categoria: c.categoria, opcoes: c.opcoes, exemplos: c.exemplos, estudadoEm: c.estudadoEm };
+    });
+    var blob = new Blob([JSON.stringify(out, null, 2)], { type: 'application/json' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'comandos-linux-' + today() + '.json';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
+    toast('Backup exportado');
+  }
+  function updatePreview() {
+    var p = parseImport(st.importText);
+    var prev = document.getElementById('prev'), btn = document.getElementById('doimp');
+    if (prev) prev.innerHTML = previewHtml(p);
+    if (btn) { btn.disabled = !p.items; btn.textContent = importLabel(p); }
+  }
+
+  /* ---------- eventos ---------- */
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-act]');
+    if (!b) return;
+    var a = b.dataset.act;
+    if (a === 'cat') { st.cat = b.dataset.v; render(); }
+    else if (a === 'open') go('detail', b.dataset.id);
+    else if (a === 'new') go('form', null);
+    else if (a === 'edit') go('form', st.id);
+    else if (a === 'back') {
+      if (history.state && history.state.nav) history.back(); else go('list', null, { replace: true });
+    }
+    else if (a === 'tab') {
+      st.view = b.dataset.v; st.id = null; st.addOpt = false;
+      history.replaceState({ nav: history.state ? history.state.nav : false, view: st.view, id: null }, '');
+      render(); window.scrollTo(0, 0);
+    }
+    else if (a === 'addopt') { st.addOpt = true; render(); }
+    else if (a === 'cancelopt') { st.addOpt = false; render(); }
+    else if (a === 'export') exportJson();
+    else if (a === 'copyprompt') copyText(PROMPT_IA, 'Pedido copiado');
+    else if (a === 'paste') {
+      if (navigator.clipboard && navigator.clipboard.readText) {
+        navigator.clipboard.readText().then(function (t) {
+          st.importText = t; var ta = document.getElementById('imp'); if (ta) ta.value = t; updatePreview();
+        }, function () { toast('Não consegui ler a área de transferência. Cole no campo.'); });
+      } else toast('Cole no campo acima.');
+    }
+    else if (a === 'import') {
+      var p = parseImport(st.importText);
+      if (!p.items) return;
+      var s = mergeInto(data, p.items);
+      save(); st.importText = '';
+      toast(plural(s.novos, 'novo', 'novos') + ', ' + plural(s.mesclados, 'mesclado', 'mesclados'));
+      go('list', null, { replace: true });
+    }
+    else if (a === 'del') {
+      var c = find(st.id);
+      if (c && window.confirm('Excluir "' + c.comando + '"? Isso não pode ser desfeito.')) {
+        data = data.filter(function (x) { return x.id !== c.id; });
+        save(); toast('Comando excluído');
+        go('list', null, { replace: true });
+      }
+    }
+  });
+
+  document.addEventListener('submit', function (e) {
+    var f = e.target;
+    if (!f.dataset || !f.dataset.form) return;
+    e.preventDefault();
+    var fd = new FormData(f);
+    if (f.dataset.form === 'addopt') {
+      var c = find(st.id);
+      var flag = str(fd.get('flag'));
+      if (!c || !flag) return;
+      var dupo = c.opcoes.some(function (o) { return o.flag === flag; });
+      if (dupo) { toast('Essa opção já existe'); return; }
+      c.opcoes.push({ flag: flag, descricao: str(fd.get('desc')) });
+      save(); render(); toast('Opção adicionada');
+    } else if (f.dataset.form === 'cmd') {
+      var nome = str(fd.get('comando'));
+      if (!nome) { toast('Informe o comando'); return; }
+      var dup = data.some(function (x) { return x.comando.toLowerCase() === nome.toLowerCase() && x.id !== st.id; });
+      if (dup) { toast('Esse comando já existe'); return; }
+      var rec = {
+        comando: nome, descricao: str(fd.get('descricao')), categoria: str(fd.get('categoria')),
+        opcoes: parseOptLines(fd.get('opcoes')), exemplos: lines(fd.get('exemplos'))
+      };
+      var id;
+      if (st.id && find(st.id)) {
+        var cur = find(st.id);
+        Object.keys(rec).forEach(function (k) { cur[k] = rec[k]; });
+        id = cur.id;
+      } else {
+        rec.id = uid(); rec.estudadoEm = today(); data.push(rec); id = rec.id;
+      }
+      save(); toast('Salvo');
+      go('detail', id, { replace: true });
+    }
+  });
+
+  document.addEventListener('input', function (e) {
+    var t = e.target;
+    if (t.id === 'q') {
+      st.q = t.value;
+      var el = document.getElementById('cards');
+      if (el) el.innerHTML = cards();
+    } else if (t.id === 'imp') {
+      st.importText = t.value;
+      updatePreview();
+    }
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
